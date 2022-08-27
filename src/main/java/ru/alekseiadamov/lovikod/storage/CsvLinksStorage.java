@@ -1,0 +1,74 @@
+package ru.alekseiadamov.lovikod;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.util.*;
+
+public class CsvLinksStorage implements LinksStorage {
+    private static final Logger logger = LoggerFactory.getLogger(CsvLinksStorage.class);
+    private final Map<String, PromoCodeInfo> links = new HashMap<>();
+    private final File path;
+
+    private CsvLinksStorage(File path) {
+        this.path = path;
+        if (!path.exists()) {
+            logger.info("CSV file doesn't exist");
+            try {
+                final boolean success = path.createNewFile();
+                if (!success) {
+                    throw new IOException("Unable to create a new file");
+                }
+            } catch (IOException e) {
+                logger.error("Failed to create a CSV file");
+            }
+        } else {
+            try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+                String linkString;
+                while ((linkString = br.readLine()) != null) {
+                    final String[] promoCodeInfoFields = linkString.split(",");
+                    final String timeLimit = promoCodeInfoFields[1].replaceAll("\"", "");
+                    final String link = promoCodeInfoFields[2].replaceAll("\"", "");
+                    final String description = promoCodeInfoFields[3].replaceAll("\"", "");
+                    links.put(link.toLowerCase(), new PromoCodeInfo(timeLimit, link, description));
+                }
+            } catch (IOException e) {
+                logger.error("Failed to fill links storage", e);
+            }
+        }
+    }
+
+    public static LinksStorage load(File path) {
+        return new CsvLinksStorage(path);
+    }
+
+    @Override
+    public boolean storeAll(Collection<PromoCodeInfo> newLinks) {
+        final Date storedDate = new Date();
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
+            for (PromoCodeInfo promoCodeInfo : newLinks) {
+                String csvLine = formatLine(promoCodeInfo, storedDate);
+                try {
+                    bw.append(csvLine);
+                } catch (IOException e) {
+                    throw new IOException(String.format("Failed to store promo code info %s", csvLine), e);
+                }
+                links.put(promoCodeInfo.getLink().toLowerCase(), promoCodeInfo);
+            }
+        } catch (IOException e) {
+            logger.error("Failed to store links", e);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public Map<String, PromoCodeInfo> get() {
+        return this.links;
+    }
+
+    private String formatLine(PromoCodeInfo info, Date date) {
+        return String.format("\"%s\",\"%s\",\"%s\",\"%s\"\n", date, info.getTimeLimit(), info.getLink(), info.getDescription());
+    }
+}
