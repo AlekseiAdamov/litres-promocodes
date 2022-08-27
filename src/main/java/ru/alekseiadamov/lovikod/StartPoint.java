@@ -2,9 +2,12 @@ package ru.alekseiadamov.lovikod;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.alekseiadamov.lovikod.storage.CsvLinksStorage;
+import ru.alekseiadamov.lovikod.storage.LinksStorage;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,8 +16,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class App {
-    private static final Logger logger = LoggerFactory.getLogger(App.class);
+public class StartPoint {
+    private static final Logger logger = LoggerFactory.getLogger(StartPoint.class);
 
     public static void main(String[] args) {
         final Config config = Config.get();
@@ -45,7 +48,7 @@ public class App {
             return;
         }
 
-        // Collect rows with dates, links and descriptions
+        // All promo code data is contained in a table.
         Elements tableRows = promoCodesPage.select(elementsQuery);
         if (tableRows.isEmpty()) {
             logger.info("No links found");
@@ -58,15 +61,12 @@ public class App {
 
         final Set<PromoCodeInfo> newPromoCodes = tableRows.stream()
                 .filter(row -> {
-                    final String link = row.select("td:eq(1) strong a[href]")
-                            .attr("href")
-                            .replaceAll("&utm_source.+$", "")
-                            .toLowerCase();
+                    final String link = getLink(row).toLowerCase();
                     return !promoCodeInfos.containsKey(link);
                 })
                 .map(row -> {
                     final String timeLimit = row.select("td:eq(0)").text();
-                    final String link = row.select("td:eq(1) a[href]").attr("href").replaceAll("&utm_source.+$", "");
+                    final String link = getLink(row);
                     final String description = row.select("td:eq(2)").text();
                     return new PromoCodeInfo(timeLimit, link, description);
                 })
@@ -83,13 +83,12 @@ public class App {
             logger.error("Failed to store new links");
         }
 
-        // Send and email with links
-        // Format:
-        // - link
-        // - promo code if needed to enter manually (add parameter parsing)
-        // - description
-        // - time limit
+        logger.info("Done, links stored in {}", csvFile);
+    }
 
-        logger.error("Done, links stored in {}", csvFile);
+    private static String getLink(Element row) {
+        return row.select("td:eq(1) strong a[href]")
+                .attr("href")
+                .replaceAll("&utm_source.+$", "");
     }
 }

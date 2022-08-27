@@ -1,5 +1,7 @@
-package ru.alekseiadamov.lovikod;
+package ru.alekseiadamov.lovikod.storage;
 
+
+import ru.alekseiadamov.lovikod.PromoCodeInfo;
 
 import java.util.Collection;
 import java.util.Map;
