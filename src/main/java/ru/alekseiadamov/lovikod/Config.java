@@ -41,4 +41,8 @@ public class Config {
     public String getQuery() {
         return properties.getProperty("page.query");
     }
+
+    public String getMailPropertiesPath() {
+        return properties.getProperty("mail.properties.path");
+    }
 }

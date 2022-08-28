@@ -14,7 +14,7 @@ class ConfigTest {
     }
 
     @Test
-    void get() {
+    void getInstance() {
         assertInstanceOf(Config.class, config);
     }
 
@@ -36,5 +36,10 @@ class ConfigTest {
     @Test
     void getQuery() {
         assertEquals("tr:has(td:eq(1) strong a[href~=^https://www.litres.ru/(?!kollekcii-knig).*&lfrom=342676429.*$])", config.getQuery());
+    }
+
+    @Test
+    void getMailPropertiesPath() {
+        assertEquals("./mail.properties", config.getMailPropertiesPath());
     }
 }
