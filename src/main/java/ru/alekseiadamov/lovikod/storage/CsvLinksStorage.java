@@ -47,7 +47,7 @@ public class CsvLinksStorage implements LinksStorage {
     @Override
     public boolean storeAll(Collection<PromoCodeInfo> newLinks) {
         final Date storedDate = new Date();
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(path, true))) {
             for (PromoCodeInfo promoCodeInfo : newLinks) {
                 writeLine(writer, promoCodeInfo, storedDate);
             }
