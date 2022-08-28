@@ -5,10 +5,10 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class Config {
-    private final Properties properties;
+    private static final Properties properties = new Properties();
+    private static Config instance;
 
     private Config() {
-        properties = new Properties();
         try (InputStream is = StartPoint.class.getClassLoader().getResourceAsStream("app.properties")) {
             if (is == null) {
                 throw new IllegalStateException("Properties file not found");
@@ -19,8 +19,11 @@ public class Config {
         }
     }
 
-    public static Config get() {
-        return new Config();
+    public static Config getInstance() {
+        if (instance == null) {
+            instance = new Config();
+        }
+        return instance;
     }
 
     public String getPageUrl() {
@@ -28,7 +31,7 @@ public class Config {
     }
 
     public boolean ready() {
-        return this.properties != null;
+        return properties != null;
     }
 
     public String getCsvPath() {

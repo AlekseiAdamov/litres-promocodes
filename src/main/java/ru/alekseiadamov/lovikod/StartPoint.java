@@ -20,7 +20,7 @@ public class StartPoint {
     private static final Logger logger = LoggerFactory.getLogger(StartPoint.class);
 
     public static void main(String[] args) {
-        final Config config = Config.get();
+        final Config config = Config.getInstance();
 
         final String pageUrl = config.getPageUrl();
         if (pageUrl == null || pageUrl.isEmpty()) {

@@ -10,7 +10,7 @@ class ConfigTest {
 
     @BeforeAll
     static void setUp() {
-        config = Config.get();
+        config = Config.getInstance();
     }
 
     @Test
@@ -35,6 +35,6 @@ class ConfigTest {
 
     @Test
     void getQuery() {
-        assertEquals("tr:has(strong a[href~=^https://www.litres.ru/(?!kollekcii-knig).*from=342676429.*$])", config.getQuery());
+        assertEquals("tr:has(td:eq(1) strong a[href~=^https://www.litres.ru/(?!kollekcii-knig).*&lfrom=342676429.*$])", config.getQuery());
     }
 }

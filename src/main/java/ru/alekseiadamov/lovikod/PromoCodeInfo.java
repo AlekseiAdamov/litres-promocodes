@@ -30,9 +30,12 @@ public class PromoCodeInfo {
     }
 
     public String getEmailText() {
-        final String promoCode = this.link
-                .replaceAll("^.+code1=", "")
-                .replaceAll("&.+$", "");
+        String promoCode = "";
+        if (this.link.contains("pages/put_money_on_account")) {
+            promoCode = this.link
+                    .replaceAll("^.+code1=", "")
+                    .replaceAll("&.+$", "");
+        }
         return String.format("<tr><td><a href=\"%s\">&#128216; get books</a></td><td>%s</td><td>%s</td><td>%s</td></tr>",
                 this.link, promoCode, this.description, this.timeLimit);
     }
