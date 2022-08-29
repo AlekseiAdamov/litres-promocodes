@@ -9,10 +9,19 @@ import org.slf4j.LoggerFactory;
 import ru.alekseiadamov.lovikod.storage.CsvLinksStorage;
 import ru.alekseiadamov.lovikod.storage.LinksStorage;
 
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -77,18 +86,59 @@ public class StartPoint {
             logger.info("No new promo codes");
             return;
         }
+        logger.info("{} new promo codes", newPromoCodes.size());
 
         final boolean success = linksStorage.storeAll(newPromoCodes);
         if (!success) {
             logger.error("Failed to store new links");
         }
 
-        logger.info("Done, links stored in {}", csvFile);
+        final String mailPropertiesPath = config.getMailPropertiesPath();
+        if (mailPropertiesPath != null && !mailPropertiesPath.isEmpty()) {
+            sendMailMessage(newPromoCodes, mailPropertiesPath);
+        }
+
+        logger.info("Done, links stored in {}", csvFile.getAbsolutePath());
     }
 
     private static String getLink(Element row) {
         return row.select("td:eq(1) strong a[href]")
                 .attr("href")
                 .replaceAll("&utm_source.+$", "");
+    }
+
+    private static void sendMailMessage(Set<PromoCodeInfo> newPromoCodes, String mailPropertiesPath) {
+        Properties mailProperties = new Properties();
+        try (final InputStream is = Files.newInputStream(Paths.get(mailPropertiesPath))) {
+            mailProperties.load(is);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to load mail properties");
+        }
+        Session session = Session.getInstance(mailProperties, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(mailProperties.getProperty("mail.user"), mailProperties.getProperty("mail.password"));
+            }
+        });
+        try {
+            final Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(mailProperties.getProperty("mail.from.address")));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(mailProperties.getProperty("mail.to.address")));
+            message.setSubject(String.format(mailProperties.getProperty("mail.message.title"), new Date()));
+
+            final String messageText = MessageText.create(newPromoCodes);
+            final MimeBodyPart mimeBodyPart = new MimeBodyPart();
+            mimeBodyPart.setContent(messageText, "text/html; charset=utf-8");
+
+            final Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(mimeBodyPart);
+
+            message.setContent(multipart);
+
+            Transport.send(message);
+            logger.info("Message sent");
+        } catch (MessagingException e) {
+            logger.error("Failed to send mail message", e);
+        }
     }
 }
