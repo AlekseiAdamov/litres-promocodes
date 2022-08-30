@@ -1,6 +1,7 @@
 package ru.alekseiadamov.lovikod;
 
 import org.junit.jupiter.api.Test;
+import ru.alekseiadamov.lovikod.message.MessageText;
 
 import java.util.ArrayList;
 import java.util.List;

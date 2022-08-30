@@ -1,4 +1,6 @@
-package ru.alekseiadamov.lovikod;
+package ru.alekseiadamov.lovikod.config;
+
+import ru.alekseiadamov.lovikod.StartPoint;
 
 import java.io.IOException;
 import java.io.InputStream;

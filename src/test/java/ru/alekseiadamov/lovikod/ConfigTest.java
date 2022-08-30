@@ -2,6 +2,7 @@ package ru.alekseiadamov.lovikod;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import ru.alekseiadamov.lovikod.config.Config;
 
 import static org.junit.jupiter.api.Assertions.*;
 

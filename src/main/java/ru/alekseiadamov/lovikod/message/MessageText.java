@@ -1,4 +1,7 @@
-package ru.alekseiadamov.lovikod;
+package ru.alekseiadamov.lovikod.message;
+
+import ru.alekseiadamov.lovikod.PromoCodeInfo;
+import ru.alekseiadamov.lovikod.StartPoint;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,7 +16,7 @@ public class MessageText {
         throw new IllegalStateException("Utility class");
     }
 
-    static String create(Collection<PromoCodeInfo> promoCodes) {
+    public static String create(Collection<PromoCodeInfo> promoCodes) {
         InputStream is = StartPoint.class.getClassLoader().getResourceAsStream("template.html");
         if (is == null) {
             throw new IllegalStateException("Failed to load mail message template");
