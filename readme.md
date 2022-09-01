@@ -1,4 +1,6 @@
-# Litres promo codes
+# Litres promo codes sender
+
+> There will be no English version of this readme because Litres is a Russian ebook store and all these promo codes are for books in Russian.
 
 Приложение для рассылки новых промокодов [Litres](https://www.litres.ru/).
 
