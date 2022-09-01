@@ -1,12 +1,12 @@
-package ru.alekseiadamov.lovikod;
+package ru.alekseiadamov.lovikod.message;
 
 import org.junit.jupiter.api.Test;
-import ru.alekseiadamov.lovikod.message.MessageText;
+import ru.alekseiadamov.lovikod.PromoCodeInfo;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MessageTextTest {
 
@@ -50,12 +50,12 @@ class MessageTextTest {
                 "</html>";
         final List<PromoCodeInfo> promoCodes = new ArrayList<>();
         promoCodes.add(new PromoCodeInfo(
-            "до 31.08.2022",
+                "до 31.08.2022",
                 "https://www.litres.ru/?mnogo268&lfrom=342676429",
                 "Скидка 30% на всё (24 часа) + 100 бонусных рублей"
         ));
         promoCodes.add(new PromoCodeInfo(
-            "до 30.08.2022",
+                "до 30.08.2022",
                 "https://www.litres.ru/?RUSKINO30&lfrom=342676429",
                 "Скидка 30% на лучшие экранизированные романы"
         ));

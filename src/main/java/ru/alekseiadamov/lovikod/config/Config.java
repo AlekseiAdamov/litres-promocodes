@@ -1,7 +1,5 @@
 package ru.alekseiadamov.lovikod.config;
 
-import ru.alekseiadamov.lovikod.StartPoint;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -11,7 +9,7 @@ public class Config {
     private static Config instance;
 
     private Config() {
-        try (InputStream is = StartPoint.class.getClassLoader().getResourceAsStream("app.properties")) {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("app.properties")) {
             if (is == null) {
                 throw new IllegalStateException("Properties file not found");
             }
