@@ -98,7 +98,7 @@ public class StartPoint {
     }
 
     private static String getLink(Element row) {
-        return row.select("td:eq(1) strong a[href]")
+        return row.select("td:eq(1) a.promocode[href]")
                 .attr("href")
                 .replaceAll("&utm_source.+$", "");
     }

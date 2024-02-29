@@ -6,7 +6,7 @@
 
     <groupId>ru.alekseiadamov</groupId>
     <artifactId>litres-promocodes</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.1</version>
 
     <name>litres-promocodes</name>
     <url>https://github.com/AlekseiAdamov/litres-promocodes</url>
